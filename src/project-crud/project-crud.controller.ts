@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param,Res,Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param,Res,Put, Delete, UseGuards } from '@nestjs/common';
 import { ProjectCrudService } from './project-crud.service';
 import { CreateProjectCrudDto } from './dto/create-project-crud.dto';
 import { UpdateProjectCrudDto } from './dto/update-project-crud.dto';
 import { AppResponse } from 'src/response.base';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('Project')
 export class ProjectCrudController {
@@ -16,11 +17,12 @@ export class ProjectCrudController {
       return AppResponse.badRequest(res, "", e.message)
     }
   }
-@Get()
+  @UseGuards(JwtAuthGuard)
+  @Get()
   async findAll(@Res() res) {
     try {
       let data = await this.ProjectCrudService.findAll();
-      return AppResponse.ok(res, data,"Success GET Project!")
+      return AppResponse.ok(res, data)
     } catch (e) {
       return AppResponse.badRequest(res, "", e.message)
     }
